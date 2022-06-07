@@ -1,0 +1,274 @@
+#!/bin/bash
+
+# dnf utils / config manager
+echo dnf utils ...
+sudo dnf install dnf-utils 'dnf-command(config-manager)'
+echo dnf utils installed.
+
+echo
+echo Adding repos...
+echo
+
+# RPM Fusion
+sudo dnf install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+sudo dnf install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+
+# NordVPN
+sudo rpm -v --import https://repo.nordvpn.com/gpg/nordvpn_public.asc
+sudo dnf config-manager --add-repo https://repo.nordvpn.com/yum/nordvpn/centos
+
+# GitHub CLI
+sudo dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
+
+# MKVToolNix
+sudo rpm -Uhv https://mkvtoolnix.download/fedora/bunkus-org-repo-2-4.noarch.rpm
+
+# Fish Shell
+sudo dnf config-manager --add-repo https://download.opensuse.org/repositories/shells:fish/Fedora_34/shells:fish.repo
+
+# Brave Browser
+sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
+sudo dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/x86_64/
+
+# pgAdmin
+sudo rpm -i https://ftp.postgresql.org/pub/pgadmin/pgadmin4/yum/pgadmin4-fedora-repo-2-1.noarch.rpm
+
+echo
+echo Installing everything...
+echo
+
+# Gnome Tweaks
+echo Gnome Tweaks ...
+sudo dnf install gnome-tweaks-40.0-2.fc34.noarch
+echo Gnome Tweaks installed.
+
+# snap
+echo Snap ...
+sudo dnf install snapd
+echo Snap installed.
+
+# vscode
+echo VS Code ...
+sudo snap install code --classic
+echo VS Code installed.
+
+# Node.js
+echo Node.js ...
+sudo dnf install nodejs
+echo Node.js installed.
+
+# spotify
+echo Spotify ...
+sudo snap install spotify
+echo Spotify installed.
+
+# NordPass
+echo NordPass ...
+sudo snap install nordpass
+echo NordPass installed.
+
+# NordVPN
+echo NordVPN ...
+sudo dnf install nordvpn
+echo NordVPN installed.
+
+# GitHub cli
+echo GitHub cli ...
+sudo dnf install gh
+echo GitHub cli installed.
+
+# VLC
+echo VLC ...
+sudo dnf install vlc python-vlc
+echo VLC installed.
+
+# HandBrake
+echo HandBrake ...
+sudo dnf install handbrake handbrake-gui
+echo HandBrake installed.
+
+# Aegisub
+echo Aegisub ...
+sudo dnf install aegisub
+echo Aegisub installed.
+
+# MKVToolNix
+echo MKVToolNix ...
+sudo dnf install mkvtoolnix mkvtoolnix-gui
+echo MKVToolNix installed.
+
+# Fish shell
+echo Fish shell ...
+sudo dnf install fish
+sudo echo /usr/local/bin/fish | sudo tee -a /etc/shells
+sudo chsh -s /usr/local/bin/fish
+echo Fish shell installed.
+
+# uuid
+echo uuid ...
+sudo dnf install uuid
+echo uuid installed.
+
+# WebP
+echo WebP ...
+sudo dnf install webp libwebp
+echo WebP installed.
+
+# WebP pixbuf loader
+echo WebP pixbuf loader ...
+sudo dnf install webp-pixbuf-loader
+echo WebP pixbuf loader installed.
+
+# brave
+echo Brave Browser ...
+sudo dnf install brave-browser
+echo Brave Browser installed.
+
+# fira code fonts
+echo Fira Code fonts ...
+sudo dnf install fira-code-fonts
+echo Fira Code fonts installed.
+
+# OBS Studio
+echo OBS Studio and prerequisites \(kmod-v4l2loopback\) ...
+sudo dnf install kmod-v4l2loopback
+sudo dnf install obs-studio
+echo OBS Studio installed.
+
+# Zoom
+echo Zoom ...
+cd Downloads/
+wget https://zoom.us/client/latest/zoom_x86_64.rpm
+sudo dnf install zoom_x86_64.rpm
+cd
+echo Zoom installed.
+
+# Postman
+echo Postman ...
+sudo snap install postman
+echo Postman installed.
+
+# Slack
+echo Slack ...
+sudo snap install slack
+echo Slack installed.
+
+# Discord
+echo Discord ...
+sudo dnf install discord
+echo Discord installed.
+
+# MongoDB Compass
+echo MongoDB Compass ...
+cd Downloads/
+wget https://downloads.mongodb.com/compass/mongodb-compass-1.32.2.x86_64.rpm
+sudo dnf install mongodb-compass-1.32.2.x86_64.rpm
+cd
+echo MongoDB Compass installed.
+
+# postgresql
+echo postgresql ...
+sudo dnf module reset postgresql -y
+sudo dnf module enable postgresql:14
+sudo dnf install vim postgresql-server postgresql
+echo postgresql installed.
+
+# pgAdmin
+echo pgAdmin ...
+sudo dnf install pgadmin4
+sudo /usr/pgadmin4/bin/setup-web.sh
+echo pgAdmin installed.
+
+# Signal
+echo Signal ...
+sudo snap install signal-desktop
+echo Signal installed.
+
+# Viber
+echo Viber ...
+cd Downloads/
+wget https://download.cdn.viber.com/desktop/Linux/viber.rpm
+sudo dnf install viber.rpm
+cd
+echo Viber installed.
+
+# libreoffice
+echo libreoffice ...
+sudo dnf install libreoffice
+echo libreoffice installed.
+
+# unrar
+echo unrar ...
+sudo dnf install unrar
+echo unrar installed.
+
+# Java SE 18 Development Kit
+echo Java SE 18 Development Kit ...
+cd Downloads/
+wget https://download.oracle.com/java/18/latest/jdk-18_linux-x64_bin.rpm
+sudo rpm -ivh jdk-18_linux-x64_bin.rpm
+cd
+echo Java SE 18 Development Kit installed.
+
+# kdenlive
+echo kdenlive ...
+sudo dnf install kdenlive
+echo kdenlive installed.
+
+# CMake
+echo CMake ...
+sudo dnf install cmake
+echo CMake installed.
+
+# ASCII Art Library
+echo ASCII Art Library ...
+sudo dnf install aalib
+echo ASCII Art Library installed.
+
+# gphoto2 libgphoto2-devel v4l2loopback ffmpeg
+echo gphoto2 libgphoto2-devel v4l2loopback ffmpeg ...
+sudo dnf install gphoto2 libgphoto2-devel v4l2loopback ffmpeg
+echo gphoto2 libgphoto2-devel v4l2loopback ffmpeg installed.
+
+# libtool
+echo libtool ...
+sudo dnf install libtool-ltdl-devel
+echo libtool installed.
+
+# xdotool
+echo xdotool ...
+sudo dnf install xdotool
+echo xdotool installed.
+
+# wmctrl
+echo wmctrl ...
+sudo dnf install wmctrl
+echo wmctrl installed.
+
+# gcc dpkg gpg
+echo gcc dpkg gpg ...
+sudo dnf install gcc dpkg-dev gpg
+echo gcc dpkg gpg installed.
+
+# rpmdevtools
+echo rpmdevtools ...
+sudo dnf install rpmdevtools rpmlint
+echo rpmdevtools installed.
+
+# libusb
+echo libusb ...
+sudo dnf install libusb-devel
+echo libusb installed.
+
+# qbittorrent
+echo qbittorrent ...
+sudo dnf install qbittorrent
+echo qbittorrent installed.
+
+# steam
+echo steam ...
+sudo dnf install steam
+echo steam installed.
+
+echo
+echo Done installing packages and programs!
