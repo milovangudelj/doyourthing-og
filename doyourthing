@@ -54,8 +54,38 @@ echo VS Code installed.
 
 # Node.js
 echo Node.js ...
-sudo dnf install nodejs
+dnf module install nodejs:16
 echo Node.js installed.
+
+# Sanity CLI
+echo Sanity CLI ...
+sudo npm i @sanity/cli -g
+echo Sanity CLI installed.
+
+# create-next-app
+echo create-next-app ...
+sudo npm i create-next-app -g
+echo create-next-app installed.
+
+# sass
+echo sass ...
+sudo npm i sass -g
+echo sass installed.
+
+# supabase
+echo supabase ...
+sudo npm i supabase -g
+echo supabase installed.
+
+# ts-node
+echo ts-node ...
+sudo npm i ts-node -g
+echo ts-node installed.
+
+# vercel
+echo vercel ...
+sudo npm i vercel -g
+echo vercel installed.
 
 # spotify
 echo Spotify ...
