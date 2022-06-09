@@ -1,60 +1,113 @@
 #!/bin/bash
 
-# dnf utils / config manager
-echo dnf utils ...
-sudo dnf install dnf-utils 'dnf-command(config-manager)'
-echo dnf utils installed.
+# Terminal color codes
+RESET='\033[0m'
+BOLD='\033[1m'
+REVERSE='\033[7m'
+RED='\033[31m'
+GREEN='\033[32m'
 
-echo
-echo Adding repos...
-echo
+# Successful/failed package install counts
+SUCCESSFUL=0
+FAILED=0
+
+# Pass the title of the package as the first parameter and
+# the install command as the second one
+dyt () {
+	printf "Installing ${BOLD}$1${RESET} ...\n"
+	
+	if $2;
+	then
+		SUCCESSFUL=$SUCCESSFUL+1
+		printf "${GREEN}✓${RESET} ${BOLD}$1${RESET} installed successfully.\n\n"
+	else
+		FAILED=$FAILED+1
+		printf "${RED}✗${RESET} ${BOLD}$1${RESET} failed installing.\n\n"
+	fi	
+}
+
+# Pretty print a section title given as first param
+title () {
+	printf "${REVERSE}$1${RESET}\n\n"
+}
+
+# start from home dir
+HOME=/home/milovangudelj
+
+cd $HOME
+
+# dnf utils / config manager
+dyt "DNF Utils" "sudo dnf -q -y install dnf-utils 'dnf-command(config-manager)'"
+
+# Skip GRUB menu (boot options)
+search="GRUB_TIMEOUT=5"
+replace="GRUB_TIMEOUT=0"
+sudo sed -i "s/$search/$replace/g" /etc/default/grub
+sudo update-grub
+
+# Repo installation section
+title "Adding repos..."
 
 # RPM Fusion
-sudo dnf install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
-sudo dnf install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+sudo dnf -q -y install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+sudo dnf -q -y install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 
 # NordVPN
 sudo rpm -v --import https://repo.nordvpn.com/gpg/nordvpn_public.asc
-sudo dnf config-manager --add-repo https://repo.nordvpn.com/yum/nordvpn/centos
+sudo dnf -q -y config-manager --add-repo https://repo.nordvpn.com/yum/nordvpn/centos
 
 # GitHub CLI
-sudo dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
+sudo dnf -q -y config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
 
 # MKVToolNix
 sudo rpm -Uhv https://mkvtoolnix.download/fedora/bunkus-org-repo-2-4.noarch.rpm
 
 # Fish Shell
-sudo dnf config-manager --add-repo https://download.opensuse.org/repositories/shells:fish/Fedora_34/shells:fish.repo
+sudo dnf -q -y config-manager --add-repo https://download.opensuse.org/repositories/shells:fish/Fedora_34/shells:fish.repo
 
 # Brave Browser
 sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
-sudo dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/x86_64/
+sudo dnf -q -y config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/x86_64/
 
 # pgAdmin
 sudo rpm -i https://ftp.postgresql.org/pub/pgadmin/pgadmin4/yum/pgadmin4-fedora-repo-2-1.noarch.rpm
 
-echo
-echo Installing everything...
-echo
+title "Adding aliases..."
+
+echo "cls, ll, myip"
+sudo echo "alias cls=\"clear\"" >> $HOME/.bashrc
+sudo echo "alias ll=\"ls -la\"" >> $HOME/.bashrc
+sudo echo "alias myip=\"curl ipinfo.io/ip && echo\"" >> $HOME/.bashrc
+source $HOME/.bashrc
+echo cls done.
+
+title "Installing packages..."
+
+# Gedit
+dyt "Gedit" "sudo dnf -q -y install gedit"
 
 # Gnome Tweaks
-echo Gnome Tweaks ...
-sudo dnf install gnome-tweaks-40.0-2.fc34.noarch
-echo Gnome Tweaks installed.
+dyt "Gnome Tweaks" "sudo dnf -q -y install gnome-tweaks"
+
+# Audacity
+dyt "Audacity" "sudo dnf -q -y install audacity"
 
 # snap
 echo Snap ...
-sudo dnf install snapd
+sudo dnf -q -y install snapd
+if [[ ! -L "/snap" ]]; then
+	sudo ln -s /var/lib/snapd/snap /snap
+fi
 echo Snap installed.
 
 # vscode
 echo VS Code ...
 sudo snap install code --classic
-echo VS Code installed.
+echo Visual Studio Code \(vscode✓\).
 
 # Node.js
 echo Node.js ...
-dnf module install nodejs:16
+dnf -q -y module install nodejs:16
 echo Node.js installed.
 
 # Sanity CLI
@@ -99,78 +152,79 @@ echo NordPass installed.
 
 # NordVPN
 echo NordVPN ...
-sudo dnf install nordvpn
+sudo dnf -q -y install nordvpn
 echo NordVPN installed.
 
 # GitHub cli
 echo GitHub cli ...
-sudo dnf install gh
+sudo dnf -q -y install gh
 echo GitHub cli installed.
 
 # VLC
 echo VLC ...
-sudo dnf install vlc python-vlc
+sudo dnf -q -y install vlc python-vlc
 echo VLC installed.
 
 # HandBrake
 echo HandBrake ...
-sudo dnf install handbrake handbrake-gui
+sudo dnf -q -y install handbrake handbrake-gui
 echo HandBrake installed.
 
 # Aegisub
 echo Aegisub ...
-sudo dnf install aegisub
+sudo dnf -q -y install aegisub
 echo Aegisub installed.
 
 # MKVToolNix
 echo MKVToolNix ...
-sudo dnf install mkvtoolnix mkvtoolnix-gui
+sudo dnf -q -y install mkvtoolnix mkvtoolnix-gui
 echo MKVToolNix installed.
 
 # Fish shell
 echo Fish shell ...
-sudo dnf install fish
+sudo dnf -q -y install fish
 sudo echo /usr/local/bin/fish | sudo tee -a /etc/shells
 sudo chsh -s /usr/local/bin/fish
 echo Fish shell installed.
 
 # uuid
 echo uuid ...
-sudo dnf install uuid
+sudo dnf -q -y install uuid
 echo uuid installed.
 
 # WebP
 echo WebP ...
-sudo dnf install webp libwebp
+sudo dnf -q -y install libwebp
 echo WebP installed.
 
 # WebP pixbuf loader
 echo WebP pixbuf loader ...
-sudo dnf install webp-pixbuf-loader
+sudo dnf -q -y install webp-pixbuf-loader
 echo WebP pixbuf loader installed.
 
 # brave
 echo Brave Browser ...
-sudo dnf install brave-browser
+sudo dnf -q -y install brave-browser
 echo Brave Browser installed.
 
 # fira code fonts
 echo Fira Code fonts ...
-sudo dnf install fira-code-fonts
+sudo dnf -q -y install fira-code-fonts
 echo Fira Code fonts installed.
 
 # OBS Studio
 echo OBS Studio and prerequisites \(kmod-v4l2loopback\) ...
-sudo dnf install kmod-v4l2loopback
-sudo dnf install obs-studio
+sudo dnf -q -y install kmod-v4l2loopback
+sudo dnf -q -y install obs-studio
 echo OBS Studio installed.
 
 # Zoom
 echo Zoom ...
-cd Downloads/
+cd $HOME/Downloads
 wget https://zoom.us/client/latest/zoom_x86_64.rpm
-sudo dnf install zoom_x86_64.rpm
-cd
+sudo dnf -q -y install zoom_x86_64.rpm
+sudo rm zoom_x86_64.rpm
+cd $HOME
 echo Zoom installed.
 
 # Postman
@@ -185,27 +239,28 @@ echo Slack installed.
 
 # Discord
 echo Discord ...
-sudo dnf install discord
+sudo dnf -q -y install discord
 echo Discord installed.
 
 # MongoDB Compass
 echo MongoDB Compass ...
-cd Downloads/
+cd $HOME/Downloads
 wget https://downloads.mongodb.com/compass/mongodb-compass-1.32.2.x86_64.rpm
-sudo dnf install mongodb-compass-1.32.2.x86_64.rpm
-cd
+sudo dnf -q -y install mongodb-compass-1.32.2.x86_64.rpm
+sudo rm mongodb-compass-1.32.2.x86_64.rpm
+cd $HOME
 echo MongoDB Compass installed.
 
 # postgresql
 echo postgresql ...
-sudo dnf module reset postgresql -y
-sudo dnf module enable postgresql:14
-sudo dnf install vim postgresql-server postgresql
+sudo dnf -q -y module reset postgresql -y
+sudo dnf -q -y module enable postgresql:14
+sudo dnf -q -y install vim postgresql-server postgresql
 echo postgresql installed.
 
 # pgAdmin
 echo pgAdmin ...
-sudo dnf install pgadmin4
+sudo dnf -q -y install pgadmin4
 sudo /usr/pgadmin4/bin/setup-web.sh
 echo pgAdmin installed.
 
@@ -216,88 +271,91 @@ echo Signal installed.
 
 # Viber
 echo Viber ...
-cd Downloads/
-wget https://download.cdn.viber.com/desktop/Linux/viber.rpm
-sudo dnf install viber.rpm
-cd
+cd $HOME/Downloads
+wget https://download.cdn.viber.com/desktop/Linux/viber.AppImage
+sudo chmod +x viber.AppImage
+sudo ./viber.AppImage
+sudo rm viber.AppImage
+cd $HOME
 echo Viber installed.
 
 # libreoffice
 echo libreoffice ...
-sudo dnf install libreoffice
+sudo dnf -q -y install libreoffice
 echo libreoffice installed.
 
 # unrar
 echo unrar ...
-sudo dnf install unrar
+sudo dnf -q -y install unrar
 echo unrar installed.
 
 # Java SE 18 Development Kit
 echo Java SE 18 Development Kit ...
-cd Downloads/
+cd $HOME/Downloads
 wget https://download.oracle.com/java/18/latest/jdk-18_linux-x64_bin.rpm
 sudo rpm -ivh jdk-18_linux-x64_bin.rpm
-cd
+sudo rm jdk-18_linux-x64_bin.rpm
+cd $HOME
 echo Java SE 18 Development Kit installed.
 
 # kdenlive
 echo kdenlive ...
-sudo dnf install kdenlive
+sudo dnf -q -y install kdenlive
 echo kdenlive installed.
 
 # CMake
 echo CMake ...
-sudo dnf install cmake
+sudo dnf -q -y install cmake
 echo CMake installed.
 
 # ASCII Art Library
 echo ASCII Art Library ...
-sudo dnf install aalib
+sudo dnf -q -y install aalib
 echo ASCII Art Library installed.
 
 # gphoto2 libgphoto2-devel v4l2loopback ffmpeg
 echo gphoto2 libgphoto2-devel v4l2loopback ffmpeg ...
-sudo dnf install gphoto2 libgphoto2-devel v4l2loopback ffmpeg
+sudo dnf -q -y install gphoto2 libgphoto2-devel v4l2loopback ffmpeg
 echo gphoto2 libgphoto2-devel v4l2loopback ffmpeg installed.
 
 # libtool
 echo libtool ...
-sudo dnf install libtool-ltdl-devel
+sudo dnf -q -y install libtool-ltdl-devel
 echo libtool installed.
 
 # xdotool
 echo xdotool ...
-sudo dnf install xdotool
+sudo dnf -q -y install xdotool
 echo xdotool installed.
 
 # wmctrl
 echo wmctrl ...
-sudo dnf install wmctrl
+sudo dnf -q -y install wmctrl
 echo wmctrl installed.
 
 # gcc dpkg gpg
 echo gcc dpkg gpg ...
-sudo dnf install gcc dpkg-dev gpg
+sudo dnf -q -y install gcc dpkg-dev gpg
 echo gcc dpkg gpg installed.
 
 # rpmdevtools
 echo rpmdevtools ...
-sudo dnf install rpmdevtools rpmlint
+sudo dnf -q -y install rpmdevtools rpmlint
 echo rpmdevtools installed.
 
 # libusb
 echo libusb ...
-sudo dnf install libusb-devel
+sudo dnf -q -y install libusb-devel
 echo libusb installed.
 
 # qbittorrent
 echo qbittorrent ...
-sudo dnf install qbittorrent
+sudo dnf -q -y install qbittorrent
 echo qbittorrent installed.
 
 # steam
 echo steam ...
-sudo dnf install steam
+sudo dnf -q -y install steam
 echo steam installed.
 
 echo
