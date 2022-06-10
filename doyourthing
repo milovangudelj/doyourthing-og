@@ -99,8 +99,7 @@ dyt "GRUB Menu" \
 "search=\"GRUB_TIMEOUT=5\"" \
 "replace=\"GRUB_TIMEOUT=0\"" \
 "sudo sed -i \"s/\$search/\$replace/g\" /etc/default/grub" \
-"sudo grub2-mkconfig -o \"$(readlink -e /etc/grub2.cfg)\"" \
-"echo \"GRUB config modified successfully.\" > ~/grubset.txt"
+"sudo grub2-mkconfig -o \"$(readlink -e /etc/grub2.cfg)\""
 
 # Setup git
 dyt "Git user config" \
