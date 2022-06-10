@@ -6,85 +6,176 @@ BOLD='\033[1m'
 REVERSE='\033[7m'
 RED='\033[31m'
 GREEN='\033[32m'
+YELLOW='\033[33m'
+BLUE='\033[34m'
+MAGENTA='\033[35m'
+CYAN='\033[36m'
+
+# Terminal control codes
+SAVE="\033[s"
+UNSAVE="\033[u"
+ERASE="\033[J"
 
 # Successful/failed package install counts
 SUCCESSFUL=0
 FAILED=0
 
+# Save cursor position
+printf "${SAVE}"
+
 # Pass the title of the package as the first parameter and
 # the install command as the second one
 dyt () {
-	printf "Installing ${BOLD}$1${RESET} ...\n"
-	
-	if $2;
-	then
-		let "SUCCESSFUL++"
-		printf "${GREEN}✓${RESET} ${BOLD}$1${RESET} installed successfully.\n\n"
-	else
-		let "FAILED++"
-		printf "${RED}✗${RESET} ${BOLD}$1${RESET} failed installing.\n\n"
-	fi	
+	# Get package name
+	name=$1
+
+	# Discard name parameter
+	shift 1
+
+   # Execute command list and return the overall result
+	coproc myproc (
+		typeset result
+
+		for instruction in "$@"
+		do
+			eval "$instruction" &> /dev/null
+			let "result+=$?"
+		done
+
+		# If every instruction is successful (returns 0) the command list is considered to be successful
+		return $result
+	)
+	PID=$myproc_PID
+   
+   # Spinner
+   local i=1
+   sp="⣷⣯⣟⡿⢿⣻⣽⣾"
+   echo -n ' '
+   while [ -d /proc/$PID ]
+   do
+      printf "${UNSAVE}${ERASE}"
+      printf "${CYAN}${sp:i++%${#sp}:1}${RESET} ${BOLD}${name}${RESET}"
+      
+      sleep 0.15
+   done
+   
+   # Unsave and erase
+   printf "${UNSAVE}${ERASE}"
+   
+   # Check if it was successful
+   if wait $PID;
+   then
+      let "SUCCESSFUL++"
+      printf "${GREEN}✓${RESET} ${BOLD}${name}${RESET}\n"
+   else
+      let "FAILED++"
+      printf "${RED}✗${RESET} ${BOLD}${name}${RESET}\n"
+   fi
+   
+   # Save cursor position
+   printf "${SAVE}"
 }
 
 # Pretty print a section title given as first param
 title () {
-	printf "${REVERSE}$1${RESET}\n\n"
+   printf "$1\n\n"
+	printf "${SAVE}"
 }
 
 # start from home dir
 HOME=/home/milovangudelj
-
 cd $HOME
+
+title "Miscellaneous / configurations..."
+
+# Update before installing anything
+dyt "DNF Update" "sudo dnf -q -y update"
 
 # dnf utils / config manager
 dyt "DNF Utils" "sudo dnf -q -y install dnf-utils 'dnf-command(config-manager)'"
 
 # Skip GRUB menu (boot options)
-search="GRUB_TIMEOUT=5"
-replace="GRUB_TIMEOUT=0"
-sudo sed -i "s/$search/$replace/g" /etc/default/grub
-sudo update-grub
+dyt "GRUB Menu" \
+"search=\"GRUB_TIMEOUT=5\"" \
+"replace=\"GRUB_TIMEOUT=0\"" \
+"sudo sed -i \"s/\$search/\$replace/g\" /etc/default/grub" \
+"sudo grub2-mkconfig -o \"$(readlink -e /etc/grub2.cfg)\"" \
+"echo \"GRUB config modified successfully.\" > ~/grubset.txt"
 
 # Setup git
-git config --global user.name milovangudelj
-git config --global user.email milovan.gudelj@gmail.com
+dyt "Git user config" \
+"git config --global user.name milovangudelj" \
+"git config --global user.email milovan.gudelj@gmail.com"
 
-# Repo installation section
-title "Adding repos..."
-
-# RPM Fusion
-sudo dnf -q -y install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
-sudo dnf -q -y install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
-
-# NordVPN
-sudo rpm -v --import https://repo.nordvpn.com/gpg/nordvpn_public.asc
-sudo dnf -q -y config-manager --add-repo https://repo.nordvpn.com/yum/nordvpn/centos
-
-# GitHub CLI
-sudo dnf -q -y config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
-
-# MKVToolNix
-sudo rpm -Uhv https://mkvtoolnix.download/fedora/bunkus-org-repo-2-4.noarch.rpm
-
-# Fish Shell
-sudo dnf -q -y config-manager --add-repo https://download.opensuse.org/repositories/shells:fish/Fedora_34/shells:fish.repo
-
-# Brave Browser
-sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
-sudo dnf -q -y config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/x86_64/
-
-# pgAdmin
-sudo rpm -i https://ftp.postgresql.org/pub/pgadmin/pgadmin4/yum/pgadmin4-fedora-repo-2-1.noarch.rpm
-
+# Aliases setup section
+echo
 title "Adding aliases..."
 
-echo "cls, ll, myip"
-sudo echo "alias cls=\"clear\"" >> $HOME/.bashrc
-sudo echo "alias ll=\"ls -la\"" >> $HOME/.bashrc
-sudo echo "alias myip=\"curl ipinfo.io/ip && echo\"" >> $HOME/.bashrc
-source $HOME/.bashrc
-echo cls done.
+# cls
+dyt "cls" "sudo echo \"alias cls=\"clear\"\" >> $HOME/.bashrc"
 
+# ll
+dyt "ll" "sudo echo \"alias ll=\"ls -la\"\" >> $HOME/.bashrc"
+
+# myip
+dyt "myip" "sudo echo \"alias myip=\"curl ipinfo.io/ip && echo\"\" >> $HOME/.bashrc"
+
+source $HOME/.bashrc &> /dev/null
+
+# Repo installation section
+echo
+title "Adding repositories..."
+
+# RPM Fusion - free
+dyt "RPM Fusion - free" \
+"sudo dnf -q -y install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm"
+
+# RPM Fusion - nonfree
+dyt "RPM Fusion - nonfree" \
+"sudo dnf -q -y install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm"
+
+# NordVPN
+dyt "NordVPN" \
+"sudo rpm --import https://repo.nordvpn.com/gpg/nordvpn_public.asc" \
+"sudo dnf -q -y config-manager --add-repo https://repo.nordvpn.com/yum/nordvpn/centos"
+
+# GitHub CLI
+dyt "GitHub CLI" \
+"sudo dnf -q -y config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo"
+
+# MKVToolNix
+dyt "MKVToolNix" \
+"sudo rpm -U https://mkvtoolnix.download/fedora/bunkus-org-repo-2-4.noarch.rpm"
+
+# Fish Shell
+dyt "Fish Shell" \
+"sudo dnf -q -y config-manager --add-repo https://download.opensuse.org/repositories/shells:fish/Fedora_34/shells:fish.repo"
+
+# Brave Browser
+dyt "Brave Browser" \
+"sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc" \
+"sudo dnf -q -y config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/x86_64/"
+
+# pgAdmin
+dyt "pgAdmin" \
+"sudo rpm -U https://ftp.postgresql.org/pub/pgadmin/pgadmin4/yum/pgadmin4-fedora-repo-2-1.noarch.rpm"
+
+# Package managers installation section
+echo
+title "Adding package managers..."
+
+# Snap
+dyt "Snap (snap)" \
+"sudo dnf -q -y install snapd" \
+"if [[ ! -L \"/snap\" ]]; then
+   sudo ln -s /var/lib/snapd/snap /snap
+fi"
+
+# Node.js
+dyt "Node.js (npm)" "dnf -q -y module install nodejs:16"
+
+# Package installation section
+echo
 title "Installing packages..."
 
 # Gedit
@@ -96,19 +187,11 @@ dyt "Gnome Tweaks" "sudo dnf -q -y install gnome-tweaks"
 # Audacity
 dyt "Audacity" "sudo dnf -q -y install audacity"
 
-# Snap
-echo Snap ...
-sudo dnf -q -y install snapd
-if [[ ! -L "/snap" ]]; then
-	sudo ln -s /var/lib/snapd/snap /snap
-fi
-echo Snap installed.
+# lolcat
+dyt "lolcat" "sudo snap install lolcat"
 
 # VS Code
 dyt "VS Code" "sudo snap install code --classic"
-
-# Node.js
-dyt "Node.js" "dnf -q -y module install nodejs:16"
 
 # Sanity CLI
 dyt "Sanity CLI" "sudo npm i @sanity/cli -g"
@@ -152,12 +235,11 @@ dyt "Aegisub" "sudo dnf -q -y install aegisub"
 # MKVToolNix
 dyt "MKVToolNix" "sudo dnf -q -y install mkvtoolnix mkvtoolnix-gui"
 
-# Fish shell
-echo Fish shell
-sudo dnf -q -y install fish
-sudo echo /usr/local/bin/fish | sudo tee -a /etc/shells
-sudo chsh -s /usr/local/bin/fish
-echo Fish shell installed.
+# Fish Shell
+dyt "Fish Shell" \
+"sudo dnf -q -y install fish" \
+"sudo echo /usr/local/bin/fish | sudo tee -a /etc/shells" \
+"sudo chsh -s /usr/local/bin/fish"
 
 # uuid
 dyt "uuid" "sudo dnf -q -y install uuid"
@@ -178,13 +260,12 @@ dyt "Fira Code fonts" "sudo dnf -q -y install fira-code-fonts"
 dyt "OBS Studio" "sudo dnf -q -y install kmod-v4l2loopback obs-studio"
 
 # Zoom
-echo Zoom ...
-cd $HOME/Downloads
-wget https://zoom.us/client/latest/zoom_x86_64.rpm
-sudo dnf -q -y install zoom_x86_64.rpm
-sudo rm zoom_x86_64.rpm
-cd $HOME
-echo Zoom installed.
+dyt "Zoom" \
+"cd $HOME/Downloads" \
+"wget https://zoom.us/client/latest/zoom_x86_64.rpm" \
+"sudo dnf -q -y install zoom_x86_64.rpm" \
+"sudo rm zoom_x86_64.rpm" \
+"cd $HOME"
 
 # Postman
 dyt "Postman" "sudo snap install postman"
@@ -196,39 +277,35 @@ dyt "Slack" "sudo snap install slack"
 dyt "Discord" "sudo dnf -q -y install discord"
 
 # MongoDB Compass
-echo MongoDB Compass ...
-cd $HOME/Downloads
-wget https://downloads.mongodb.com/compass/mongodb-compass-1.32.2.x86_64.rpm
-sudo dnf -q -y install mongodb-compass-1.32.2.x86_64.rpm
-sudo rm mongodb-compass-1.32.2.x86_64.rpm
-cd $HOME
-echo MongoDB Compass installed.
+dyt "MongoDB Compass" \
+"cd $HOME/Downloads" \
+"wget https://downloads.mongodb.com/compass/mongodb-compass-1.32.2.x86_64.rpm" \
+"sudo dnf -q -y install mongodb-compass-1.32.2.x86_64.rpm" \
+"sudo rm mongodb-compass-1.32.2.x86_64.rpm" \
+"cd $HOME"
 
 # postgresql
-echo postgresql ...
-sudo dnf -q -y module reset postgresql -y
-sudo dnf -q -y module enable postgresql:14
-sudo dnf -q -y install vim postgresql-server postgresql
-echo postgresql installed.
+dyt "PostgreSQL" \
+"sudo dnf -q -y module reset postgresql -y" \
+"sudo dnf -q -y module enable postgresql:14" \
+"sudo dnf -q -y install vim postgresql-server postgresql"
 
 # pgAdmin
-echo pgAdmin ...
-sudo dnf -q -y install pgadmin4
-sudo /usr/pgadmin4/bin/setup-web.sh
-echo pgAdmin installed.
+dyt "pgAdmin" \
+"sudo dnf -q -y install pgadmin4" \
+"sudo /usr/pgadmin4/bin/setup-web.sh --yes"
 
 # Signal
 dyt "Signal" "sudo snap install signal-desktop"
 
 # Viber
-echo Viber ...
-cd $HOME/Downloads
-wget https://download.cdn.viber.com/desktop/Linux/viber.AppImage
-sudo chmod +x viber.AppImage
-sudo ./viber.AppImage
-sudo rm viber.AppImage
-cd $HOME
-echo Viber installed.
+dyt "Viber" \
+"cd $HOME/Downloads" \
+"wget https://download.cdn.viber.com/desktop/Linux/viber.AppImage" \
+"sudo chmod +x viber.AppImage" \
+"sudo ./viber.AppImage" \
+"sudo rm viber.AppImage" \
+"cd $HOME"
 
 # libreoffice
 dyt "libreoffice" "sudo dnf -q -y install libreoffice"
@@ -237,13 +314,12 @@ dyt "libreoffice" "sudo dnf -q -y install libreoffice"
 dyt "unrar" "sudo dnf -q -y install unrar"
 
 # Java SE 18 Development Kit
-echo Java SE 18 Development Kit ...
-cd $HOME/Downloads
-wget https://download.oracle.com/java/18/latest/jdk-18_linux-x64_bin.rpm
-sudo rpm -ivh jdk-18_linux-x64_bin.rpm
-sudo rm jdk-18_linux-x64_bin.rpm
-cd $HOME
-echo Java SE 18 Development Kit installed.
+dyt "Java SE 18 Development Kit" \
+"cd $HOME/Downloads" \
+"wget https://download.oracle.com/java/18/latest/jdk-18_linux-x64_bin.rpm" \
+"sudo rpm -ivh jdk-18_linux-x64_bin.rpm" \
+"sudo rm jdk-18_linux-x64_bin.rpm" \
+"cd $HOME"
 
 # Kdenlive
 dyt "Kdenlive" "sudo dnf -q -y install kdenlive"
@@ -289,5 +365,7 @@ dyt "Steam" "sudo dnf -q -y install steam"
 
 # The End
 
-printf "Done installing packages and programs!\n"
+printf "\n"
+printf "${BOLD}* Done! *${RESET}" | lolcat -S 175 -t 2> /dev/null
+printf "\n\n"
 printf "${GREEN}${SUCCESSFUL}${RESET} installed\n${RED}${FAILED}${RESET} failed\n"
