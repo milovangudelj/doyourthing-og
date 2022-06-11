@@ -20,6 +20,17 @@ ERASE="\033[J"
 SUCCESSFUL=0
 FAILED=0
 
+# The End
+theend () {
+   printf "$1" | lolcat -S "$2" -t 2> /dev/null
+   printf "\n\n"
+   printf "${GREEN}${SUCCESSFUL}${RESET} installed\n${RED}${FAILED}${RESET} failed\n"
+}
+
+# Catch SIGINT
+interrupted () { theend "\n\n${BOLD}! Interrupted !${RESET}" 65; exit; }
+trap interrupted SIGINT
+
 # Save cursor position
 printf "${SAVE}"
 
@@ -86,13 +97,7 @@ title () {
 HOME=/home/milovangudelj
 cd $HOME
 
-title "Miscellaneous / configurations..."
-
-# Update before installing anything
-dyt "DNF Update" "sudo dnf -q -y update"
-
-# dnf utils / config manager
-dyt "DNF Utils" "sudo dnf -q -y install dnf-utils 'dnf-command(config-manager)'"
+title "Configurations..."
 
 # Skip GRUB menu (boot options)
 dyt "GRUB Menu" \
@@ -106,18 +111,40 @@ dyt "Git user config" \
 "git config --global user.name milovangudelj" \
 "git config --global user.email milovan.gudelj@gmail.com"
 
+echo
+title "Miscellaneous..."
+
+# Update before installing anything
+dyt "DNF Update" "sudo dnf -q -y update"
+
+# dnf utils / config manager
+dyt "DNF Utils" "sudo dnf -q -y install dnf-utils 'dnf-command(config-manager)'"
+
 # Aliases setup section
 echo
 title "Adding aliases..."
 
+if ! grep -q "# Custom Aliases" $HOME/.bashrc; then
+   sudo printf "\n# Custom Aliases\n" >> $HOME/.bashrc
+fi
+
 # cls
-dyt "cls" "sudo echo \"alias cls=\"clear\"\" >> $HOME/.bashrc"
+dyt "cls" \
+"if ! grep -q \"alias cls\" $HOME/.bashrc; then
+   printf \"alias cls='clear'\n\" >> $HOME/.bashrc
+fi"
 
 # ll
-dyt "ll" "sudo echo \"alias ll=\"ls -la\"\" >> $HOME/.bashrc"
+dyt "ll" \
+"if ! grep -q \"alias ll\" $HOME/.bashrc; then
+   printf \"alias ll='ls -la'\n\" >> $HOME/.bashrc
+fi"
 
 # myip
-dyt "myip" "sudo echo \"alias myip=\"curl ipinfo.io/ip && echo\"\" >> $HOME/.bashrc"
+dyt "myip" \
+"if ! grep -q \"alias myip\" $HOME/.bashrc; then
+   printf \"alias myip='curl ipinfo.io/ip && echo'\n\" >> $HOME/.bashrc
+fi"
 
 source $HOME/.bashrc &> /dev/null
 
@@ -159,32 +186,35 @@ dyt "Brave Browser" \
 dyt "pgAdmin" \
 "sudo rpm -U https://ftp.postgresql.org/pub/pgadmin/pgadmin4/yum/pgadmin4-fedora-repo-2-1.noarch.rpm"
 
+# Update repo metadata
+sudo dnf -q -y update
+
 # Package managers installation section
 echo
 title "Adding package managers..."
 
 # Snap
 dyt "Snap (snap)" \
-"sudo dnf -q -y install snapd" \
+"sudo dnf -q -y -C install snapd" \
 "if [[ ! -L \"/snap\" ]]; then
    sudo ln -s /var/lib/snapd/snap /snap
 fi"
 
 # Node.js
-dyt "Node.js (npm)" "dnf -q -y module install nodejs:16"
+dyt "Node.js (npm)" "dnf -q -y -C module install nodejs:16"
 
 # Package installation section
 echo
 title "Installing packages..."
 
 # Gedit
-dyt "Gedit" "sudo dnf -q -y install gedit"
+dyt "Gedit" "sudo dnf -q -y -C install gedit"
 
 # Gnome Tweaks
-dyt "Gnome Tweaks" "sudo dnf -q -y install gnome-tweaks"
+dyt "Gnome Tweaks" "sudo dnf -q -y -C install gnome-tweaks"
 
 # Audacity
-dyt "Audacity" "sudo dnf -q -y install audacity"
+dyt "Audacity" "sudo dnf -q -y -C install audacity"
 
 # lolcat
 dyt "lolcat" "sudo snap install lolcat"
@@ -217,52 +247,52 @@ dyt "Spotify" "sudo snap install spotify"
 dyt "NordPass" "sudo snap install nordpass"
 
 # NordVPN
-dyt "NordVPN" "sudo dnf -q -y install nordvpn"
+dyt "NordVPN" "sudo dnf -q -y -C install nordvpn"
 
 # GitHub CLI
-dyt "GitHub CLI" "sudo dnf -q -y install gh"
+dyt "GitHub CLI" "sudo dnf -q -y -C install gh"
 
 # VLC
-dyt "VLC" "sudo dnf -q -y install vlc python-vlc"
+dyt "VLC" "sudo dnf -q -y -C install vlc python-vlc"
 
 # HandBrake
-dyt "HandBrake" "sudo dnf -q -y install handbrake handbrake-gui"
+dyt "HandBrake" "sudo dnf -q -y -C install handbrake handbrake-gui"
 
 # Aegisub
-dyt "Aegisub" "sudo dnf -q -y install aegisub"
+dyt "Aegisub" "sudo dnf -q -y -C install aegisub"
 
 # MKVToolNix
-dyt "MKVToolNix" "sudo dnf -q -y install mkvtoolnix mkvtoolnix-gui"
+dyt "MKVToolNix" "sudo dnf -q -y -C install mkvtoolnix mkvtoolnix-gui"
 
 # Fish Shell
 dyt "Fish Shell" \
-"sudo dnf -q -y install fish" \
+"sudo dnf -q -y -C install fish" \
 "sudo echo /usr/local/bin/fish | sudo tee -a /etc/shells" \
 "sudo chsh -s /usr/local/bin/fish"
 
 # uuid
-dyt "uuid" "sudo dnf -q -y install uuid"
+dyt "uuid" "sudo dnf -q -y -C install uuid"
 
 # WebP
-dyt "WebP" "sudo dnf -q -y install libwebp"
+dyt "WebP" "sudo dnf -q -y -C install libwebp"
 
 # webp-pixbuf-loader
-dyt "webp-pixbuf-loader" "sudo dnf -q -y install webp-pixbuf-loader"
+dyt "webp-pixbuf-loader" "sudo dnf -q -y -C install webp-pixbuf-loader"
 
 # Brave Browser
-dyt "Brave Browser" "sudo dnf -q -y install brave-browser"
+dyt "Brave Browser" "sudo dnf -q -y -C install brave-browser"
 
 # Fira Code fonts
-dyt "Fira Code fonts" "sudo dnf -q -y install fira-code-fonts"
+dyt "Fira Code fonts" "sudo dnf -q -y -C install fira-code-fonts"
 
 # OBS Studio
-dyt "OBS Studio" "sudo dnf -q -y install kmod-v4l2loopback obs-studio"
+dyt "OBS Studio" "sudo dnf -q -y -C install kmod-v4l2loopback obs-studio"
 
 # Zoom
 dyt "Zoom" \
 "cd $HOME/Downloads" \
 "wget https://zoom.us/client/latest/zoom_x86_64.rpm" \
-"sudo dnf -q -y install zoom_x86_64.rpm" \
+"sudo dnf -q -y -C install zoom_x86_64.rpm" \
 "sudo rm zoom_x86_64.rpm" \
 "cd $HOME"
 
@@ -273,25 +303,25 @@ dyt "Postman" "sudo snap install postman"
 dyt "Slack" "sudo snap install slack"
 
 # Discord
-dyt "Discord" "sudo dnf -q -y install discord"
+dyt "Discord" "sudo dnf -q -y -C install discord"
 
 # MongoDB Compass
 dyt "MongoDB Compass" \
 "cd $HOME/Downloads" \
 "wget https://downloads.mongodb.com/compass/mongodb-compass-1.32.2.x86_64.rpm" \
-"sudo dnf -q -y install mongodb-compass-1.32.2.x86_64.rpm" \
+"sudo dnf -q -y -C install mongodb-compass-1.32.2.x86_64.rpm" \
 "sudo rm mongodb-compass-1.32.2.x86_64.rpm" \
 "cd $HOME"
 
 # postgresql
 dyt "PostgreSQL" \
-"sudo dnf -q -y module reset postgresql -y" \
-"sudo dnf -q -y module enable postgresql:14" \
-"sudo dnf -q -y install vim postgresql-server postgresql"
+"sudo dnf -q -y -C module reset postgresql -y" \
+"sudo dnf -q -y -C module enable postgresql:14" \
+"sudo dnf -q -y -C install vim postgresql-server postgresql"
 
 # pgAdmin
 dyt "pgAdmin" \
-"sudo dnf -q -y install pgadmin4" \
+"sudo dnf -q -y -C install pgadmin4" \
 "sudo /usr/pgadmin4/bin/setup-web.sh --yes"
 
 # Signal
@@ -307,10 +337,10 @@ dyt "Viber" \
 "cd $HOME"
 
 # libreoffice
-dyt "libreoffice" "sudo dnf -q -y install libreoffice"
+dyt "libreoffice" "sudo dnf -q -y -C install libreoffice"
 
 # unrar
-dyt "unrar" "sudo dnf -q -y install unrar"
+dyt "unrar" "sudo dnf -q -y -C install unrar"
 
 # Java SE 18 Development Kit
 dyt "Java SE 18 Development Kit" \
@@ -321,50 +351,47 @@ dyt "Java SE 18 Development Kit" \
 "cd $HOME"
 
 # Kdenlive
-dyt "Kdenlive" "sudo dnf -q -y install kdenlive"
+dyt "Kdenlive" "sudo dnf -q -y -C install kdenlive"
 
 # CMake
-dyt "CMake" "sudo dnf -q -y install cmake"
+dyt "CMake" "sudo dnf -q -y -C install cmake"
 
 # ASCII Art Library
-dyt "ASCII Art Library" "sudo dnf -q -y install aalib"
+dyt "ASCII Art Library" "sudo dnf -q -y -C install aalib"
 
 # gphoto2 libgphoto2-devel
-dyt "Gphoto" "sudo dnf -q -y install gphoto2 libgphoto2-devel"
+dyt "Gphoto" "sudo dnf -q -y -C install gphoto2 libgphoto2-devel"
 
 # ffmpeg
-dyt "FFmpeg" "sudo dnf -q -y install ffmpeg"
+dyt "FFmpeg" "sudo dnf -q -y -C install ffmpeg"
 
 # v4l2loopback
-dyt "v4l2loopback" "sudo dnf -q -y install v4l2loopback"
+dyt "v4l2loopback" "sudo dnf -q -y -C install v4l2loopback"
 
 # libtool
-dyt "libtool" "sudo dnf -q -y install libtool-ltdl-devel"
+dyt "libtool" "sudo dnf -q -y -C install libtool-ltdl-devel"
 
 # xdotool
-dyt "xdotool" "sudo dnf -q -y install xdotool"
+dyt "xdotool" "sudo dnf -q -y -C install xdotool"
 
 # wmctrl
-dyt "wmctrl" "sudo dnf -q -y install wmctrl"
+dyt "wmctrl" "sudo dnf -q -y -C install wmctrl"
 
 # RPM publishing utils
-dyt "RPM utils" "sudo dnf -q -y install gcc dpkg-dev gpg"
+dyt "RPM utils" "sudo dnf -q -y -C install gcc dpkg-dev gpg"
 
 # rpmdevtools
-dyt "rpmdevtools" "sudo dnf -q -y install rpmdevtools rpmlint"
+dyt "rpmdevtools" "sudo dnf -q -y -C install rpmdevtools rpmlint"
 
 # libusb
-dyt "libusb" "sudo dnf -q -y install libusb-devel"
+dyt "libusb" "sudo dnf -q -y -C install libusb-devel"
 
 # qBittorrent
-dyt "qBittorrent" "sudo dnf -q -y install qbittorrent"
+dyt "qBittorrent" "sudo dnf -q -y -C install qbittorrent"
 
 # Steam
-dyt "Steam" "sudo dnf -q -y install steam"
+dyt "Steam" "sudo dnf -q -y -C install steam"
 
 # The End
 
-printf "\n"
-printf "${BOLD}* Done! *${RESET}" | lolcat -S 175 -t 2> /dev/null
-printf "\n\n"
-printf "${GREEN}${SUCCESSFUL}${RESET} installed\n${RED}${FAILED}${RESET} failed\n"
+theend "\n${BOLD}* Done! *${RESET}" 175
