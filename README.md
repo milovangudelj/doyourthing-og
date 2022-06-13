@@ -50,5 +50,5 @@ The message will be printed along with the count of successful installs.
 ![Output example](https://user-images.githubusercontent.com/49202538/173410425-15afdacc-4c1a-42ce-abdc-86bfe83b8f81.png)
 
 ### TODO
-- [x] complete the functions documentation
-- [ ] make the second `theend()` argument optional
+- [x] Complete the functions documentation
+- [x] Make the second `theend()` argument optional
