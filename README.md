@@ -39,7 +39,9 @@ title "Installing packages..."
 By default it outputs the given text in bold with a couple of new line characters after it.
 
 ### `theend()`
-It accepts two arguments: the first one representing a message to be printed on script completion or termination along with the count of successful and failed installs, the second one is an optional seed for the message colors that will be passed to [`lolcat`](https://github.com/busyloop/lolcat).
+It accepts two arguments: 
+ - An optional message to be printed on script completion or termination along with the count of successful and failed installs. If not provided it will default to `"\n${BOLD}* Done! *${RESET}"`
+ - An optional seed for the message colors that will be passed to [`lolcat`](https://github.com/busyloop/lolcat). If not provided it will default to `175` (a greenish gradient)
 ```bash
 theend "\n${BOLD}* Done! *${RESET}" 175
 ```
