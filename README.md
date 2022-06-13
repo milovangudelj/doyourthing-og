@@ -44,23 +44,8 @@ It accepts two arguments: the first one representing a message to be printed on 
 theend "\n${BOLD}* Done! *${RESET}" 175
 ```
 The message will be printed along with the count of successful installs.
-```bash
-Adding package managers...
 
-✓ Snap (snap)
-✓ Node.js (npm)
-
-Installing packages...
-
-✓ lolcat
-✓ VS Code
-✓ Vercel
-
-* Done! *
-
-5 installed
-0 failed
-```
+![Output example](https://user-images.githubusercontent.com/49202538/173410425-15afdacc-4c1a-42ce-abdc-86bfe83b8f81.png)
 
 ### TODO
 - [x] complete the functions documentation
