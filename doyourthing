@@ -24,7 +24,7 @@ FAILED=0
 theend () {
    printf "$1" | lolcat -S "$2" -t 2> /dev/null
    printf "\n\n"
-   printf "${GREEN}${SUCCESSFUL}${RESET} installed\n${RED}${FAILED}${RESET} failed\n"
+   printf " ${GREEN}${SUCCESSFUL}${RESET} installed\n ${RED}${FAILED}${RESET} failed\n"
 }
 
 # Catch SIGINT
@@ -77,10 +77,10 @@ dyt () {
    if wait $PID;
    then
       let "SUCCESSFUL++"
-      printf "${GREEN}✓${RESET} ${BOLD}${name}${RESET}\n"
+      printf " ${GREEN}✓${RESET} ${BOLD}${name}${RESET}\n"
    else
       let "FAILED++"
-      printf "${RED}✗${RESET} ${BOLD}${name}${RESET}\n"
+      printf " ${RED}✗${RESET} ${BOLD}${name}${RESET}\n"
    fi
    
    # Save cursor position
