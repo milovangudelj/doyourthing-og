@@ -158,6 +158,12 @@ dyt "myip" \
    printf \"alias myip='curl ipinfo.io/ip && echo'\n\" >> $HOME/.bashrc
 fi"
 
+# cmkb
+dyt "cmkb" \
+"if ! grep -q \"alias cmkb\" $HOME/.bashrc; then
+   printf \"alias cmkb='cmake . -B build/ && cmake --build build/'\n\" >> $HOME/.bashrc
+fi"
+
 source $HOME/.bashrc &> /dev/null
 
 # Repo installation section
@@ -218,6 +224,14 @@ dyt "Node.js (npm)" "dnf -q -y -C module install nodejs:16"
 # Package installation section
 echo
 title "Installing packages..."
+
+# Development Tools
+dyt "Development Tools" \
+"sudo dnf groupinstall --disablerepo=\* --enablerepo=fedora,updates \"Development Tools\""
+
+# GCC g++
+dyt "GCC g++" \
+"sudo dnf install gcc-g++"
 
 # Gedit
 dyt "Gedit" "sudo dnf -q -y -C install gedit"
