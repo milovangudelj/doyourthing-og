@@ -24,7 +24,7 @@ FAILED=0
 theend () {
    if [ $# -eq 0 ]; then
       printf "\n${BOLD}* Done! *${RESET}" | lolcat -S 175 -t 2> /dev/null
-   elif [ $# -le 2 ]; then
+   elif [ $# -lt 2 ]; then
       printf "$1" | lolcat -S 175 -t 2> /dev/null
    else
       printf "$1" | lolcat -S "$2" -t 2> /dev/null
@@ -109,7 +109,7 @@ title "Configurations..."
 # Skip GRUB menu (boot options)
 dyt "GRUB Menu" \
 "search=\"GRUB_TIMEOUT=5\"" \
-"replace=\"GRUB_TIMEOUT=0\"" \
+"replace=\"GRUB_TIMEOUT=0\nGRUB_TIMEOUT_STYLE=hidden\"" \
 "sudo sed -i \"s/\$search/\$replace/g\" /etc/default/grub" \
 "sudo grub2-mkconfig -o \"$(readlink -e /etc/grub2.cfg)\""
 
@@ -117,6 +117,11 @@ dyt "GRUB Menu" \
 dyt "Git user config" \
 "git config --global user.name milovangudelj" \
 "git config --global user.email milovan.gudelj@gmail.com"
+
+# Ctrl+Shift+Alt (Remove Gnome shortcut interfering with VS Code)
+dyt "Ctrl+Shift+Alt" \
+"gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-up \"['<Super><Shift>Page_Up']\"" \
+"gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-down \"['<Super><Shift>Page_Down']\""
 
 echo
 title "Miscellaneous..."
