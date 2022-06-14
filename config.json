@@ -1,0 +1,33 @@
+{
+	"machines": [
+		{
+			"name": "Fedora",
+			"managers": ["snap", "npm"],
+			"settings": [
+				{
+					"name": "GRUB config",
+					"commands": [
+						"search=\"GRUB_TIMEOUT=5\"",
+						"replace=\"GRUB_TIMEOUT=0\"",
+						"sudo sed -i \"s/$search/$replace/g\" /etc/default/grub",
+						"sudo grub2-mkconfig -o \"$(readlink -e /etc/grub2.cfg)\""
+					]
+				},
+				{
+					"name": "Git user config",
+					"commands": [
+						"git config --global user.name milovangudelj",
+						"git config --global user.email milovan.gudelj@gmail.com"
+					]
+				},
+				{
+					"name": "Ctrl+Shift+Alt",
+					"commands": [
+						"gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-up \"['<Super><Shift>Page_Up']\"",
+						"gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-down \"['<Super><Shift>Page_Down']\""
+					]
+				}
+			]
+		}
+	]
+}
