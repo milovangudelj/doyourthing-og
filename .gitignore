@@ -1,0 +1,5 @@
+# Ignore VS Code project configuration files
+.vscode
+
+# Build
+build/
