@@ -8,6 +8,9 @@ set(CMAKE_CXX_STANDARD 17) # C++ Standard
 # Internal library
 add_library(libdyt STATIC
 	src/libdyt.cc
+	src/action.cc
+	src/section.cc
+	src/spinner.cc
 )
 
 # Internal include directory

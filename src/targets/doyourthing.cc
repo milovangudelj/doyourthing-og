@@ -4,31 +4,24 @@
 #include <stdlib.h>
 #include "nlohmann/json.hpp"
 
+#include "libdyt.hh"
+
 using namespace std;
+using namespace dyt;
 using json = nlohmann::json;
 
 int main()
 {
-	int i;
-
 	if (!system(NULL))
 	{
 		printf("Command processor not available...\n");
 		exit(EXIT_FAILURE);
 	}
 
-	printf("Executing command DIR...\n");
+	DoYourThing dyter("config.json");
 
-	i = system("dir");
-
-	printf("The value returned was: %d.\n", i);
-
-	ifstream config("config.json");
-	json j;
-	config >> j;
-
-	// pretty print with indent of 4 spaces
-	std::cout << std::setw(4) << j << '\n';
+	// dyter.print_config();
+	dyter.do_it();
 
 	return 0;
 }
