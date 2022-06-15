@@ -8,7 +8,7 @@
 using namespace std;
 using namespace dyt;
 
-Spinner::Spinner(const std::string &name) : _name{name}, _success{false}, _is_running{false}, _delay{150}
+Spinner::Spinner(const std::string &name) : _name{name}, _frames{{"⣷", "⣯", "⣟", "⡿", "⢿", "⣻", "⣽", "⣾"}}, _success{false}, _is_running{false}, _delay{150}
 {
 }
 
@@ -38,12 +38,21 @@ void Spinner::stop(bool success)
 
 void Spinner::spin()
 {
+	int frame = 0;
+
 	while (_is_running)
 	{
-		printf(".");
+		printf(" %s", _frames.at(frame).c_str());
 		fflush(stdout);
 
+		frame++;
+		if (frame >= _frames.size())
+			frame = 0;
+
 		std::this_thread::sleep_for(std::chrono::milliseconds(_delay));
+
+		printf("\b\b");
+		fflush(stdout);
 	}
 
 	printf(" %s Done.\n", _success ? "✓" : "✗");
