@@ -2,29 +2,87 @@
 	"machines": [
 		{
 			"name": "Fedora",
-			"managers": ["snap", "npm"],
-			"settings": [
+			"sections": [
 				{
-					"name": "GRUB config",
-					"commands": [
-						"search=\"GRUB_TIMEOUT=5\"",
-						"replace=\"GRUB_TIMEOUT=0\"",
-						"sudo sed -i \"s/$search/$replace/g\" /etc/default/grub",
-						"sudo grub2-mkconfig -o \"$(readlink -e /etc/grub2.cfg)\""
+					"id": "repos",
+					"name": "Repositories",
+					"actions": [
+						"rpmfusion-free",
+						"rpmfusion-nonfree",
+						"github-cli",
+						"nordvpn",
+						"mkvtoolnix",
+						"fish-shell",
+						"brave-browser",
+						"pg-admin"
 					]
 				},
 				{
-					"name": "Git user config",
-					"commands": [
-						"git config --global user.name milovangudelj",
-						"git config --global user.email milovan.gudelj@gmail.com"
+					"id": "managers",
+					"name": "Package managers",
+					"actions": ["snap", "npm"]
+				},
+				{
+					"id": "configs",
+					"name": "Configurations",
+					"actions": [
+						{
+							"name": "GRUB config",
+							"commands": [
+								"search=\"GRUB_TIMEOUT=5\"",
+								"replace=\"GRUB_TIMEOUT=0\"",
+								"sudo sed -i \"s/$search/$replace/g\" /etc/default/grub",
+								"sudo grub2-mkconfig -o \"$(readlink -e /etc/grub2.cfg)\""
+							]
+						},
+						{
+							"name": "Git user config",
+							"commands": [
+								"git config --global user.name milovangudelj",
+								"git config --global user.email milovan.gudelj@gmail.com"
+							]
+						},
+						{
+							"name": "Ctrl+Shift+Alt",
+							"commands": [
+								"gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-up \"['<Super><Shift>Page_Up']\"",
+								"gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-down \"['<Super><Shift>Page_Down']\""
+							]
+						}
 					]
 				},
 				{
-					"name": "Ctrl+Shift+Alt",
-					"commands": [
-						"gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-up \"['<Super><Shift>Page_Up']\"",
-						"gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-down \"['<Super><Shift>Page_Down']\""
+					"id": "misc",
+					"name": "Miscellaneous",
+					"actions": [
+						{
+							"name": "DNF Update",
+							"commands": ["sudo dnf -q -y update"]
+						}
+					]
+				},
+				{
+					"id": "aliases",
+					"name": "Aliases",
+					"actions": [
+						{
+							"name": "cls",
+							"commands": [
+								"if ! grep -q \"# Custom Aliases\" $HOME/.bashrc; then sudo printf \"\n# Custom Aliases\n\" >> $HOME/.bashrc fi"
+							]
+						}
+					]
+				},
+				{
+					"id": "packages",
+					"name": "Packages",
+					"actions": [
+						{
+							"name": "Development Tools",
+							"commands": [
+								"sudo dnf groupinstall --disablerepo=\\* --enablerepo=fedora,updates \"Development Tools\""
+							]
+						}
 					]
 				}
 			]
