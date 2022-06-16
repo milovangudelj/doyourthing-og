@@ -18,7 +18,7 @@ int main()
 		exit(EXIT_FAILURE);
 	}
 
-	DoYourThing manager("config.json", "defaults.json");
+	DoYourThing manager("config.json");
 
 	// manager.print_config();
 	// manager.print_defaults();
