@@ -3,14 +3,15 @@ set(VERSION 0.1.1)
 project(doyourthing VERSION ${VERSION} LANGUAGES CXX)
 
 set(TARGET_NAME doyourthing) # Target name
-set(CMAKE_CXX_STANDARD 17) # C++ Standard
+set(CMAKE_CXX_STANDARD 20) # C++ Standard
 
 # Internal library
 add_library(libdyt STATIC
-	src/libdyt.cc
+	src/manager.cc
 	src/action.cc
 	src/section.cc
 	src/spinner.cc
+	src/colors.cc
 )
 
 # Internal include directory
@@ -24,5 +25,6 @@ target_link_libraries(${TARGET_NAME} PRIVATE libdyt)
 
 # json - Lightweight library for parsing json data - https://github.com/nlohmann/json.git
 add_subdirectory(extern/json)
+add_subdirectory(extern/fmt)
 target_include_directories(${TARGET_NAME} PRIVATE json)
-target_link_libraries(${TARGET_NAME} PRIVATE nlohmann_json::nlohmann_json)
+target_link_libraries(${TARGET_NAME} PRIVATE nlohmann_json::nlohmann_json fmt::fmt)
