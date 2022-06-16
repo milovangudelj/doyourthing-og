@@ -33,7 +33,14 @@ int Action::run()
 
 	for (auto command : _commands)
 	{
-		result += system(command.c_str());
+		try
+		{
+			result += system(std::string(command + " &> /dev/null").c_str());
+		}
+		catch (const std::exception &e)
+		{
+			result += 1;
+		}
 	}
 
 	spinner.stop(result == 0);
