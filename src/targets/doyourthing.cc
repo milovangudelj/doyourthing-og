@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include "nlohmann/json.hpp"
 
-#include "libdyt.hh"
+#include "Manager.hh"
 
 using namespace std;
 using namespace dyt;
@@ -18,10 +18,11 @@ int main()
 		exit(EXIT_FAILURE);
 	}
 
-	DoYourThing dyter("config.json");
+	DoYourThing manager("config.json", "defaults.json");
 
-	// dyter.print_config();
-	dyter.do_it();
+	// manager.print_config();
+	// manager.print_defaults();
+	manager.do_it();
 
 	return 0;
 }
