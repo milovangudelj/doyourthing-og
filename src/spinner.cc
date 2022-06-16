@@ -2,8 +2,10 @@
 #include <stdlib.h>
 #include <chrono>
 #include <thread>
+#include <fmt/printf.h>
 
 #include "Spinner.hh"
+#include "Colors.hh"
 
 using namespace std;
 using namespace dyt;
@@ -39,10 +41,11 @@ void Spinner::stop(bool success)
 void Spinner::spin()
 {
 	int frame = 0;
+	Colors &colors = Colors::Get();
 
 	while (_is_running)
 	{
-		printf(" %s", _frames.at(frame).c_str());
+		fmt::printf("\r%s %s %s", colors.ERASE_E, colors.paint(_frames.at(frame), colors.BLUE_FG), colors.paint(_name, colors.BRIGHT));
 		fflush(stdout);
 
 		frame++;
@@ -50,10 +53,7 @@ void Spinner::spin()
 			frame = 0;
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(_delay));
-
-		printf("\b\b");
-		fflush(stdout);
 	}
 
-	printf(" %s Done.\n", _success ? "✓" : "✗");
+	fmt::printf("\r %s %s\n", _success ? colors.paint("✓", colors.GREEN_FG) : colors.paint("✗", colors.RED_FG), colors.paint(_name, colors.BRIGHT));
 }
