@@ -20,7 +20,7 @@ int main()
 		exit(EXIT_FAILURE);
 	}
 
-	DoYourThing manager("config.json", {{{Settings::SettingName::Quiet, Settings::SettingOption::n}}});
+	DoYourThing manager("config.json", {{{Settings::SettingName::Quiet, Settings::SettingOption::y}}});
 
 	// manager.print_config();
 	// manager.print_defaults();
