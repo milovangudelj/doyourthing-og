@@ -1,97 +1,67 @@
 {
-	"managers": [
-		{
-			"id": "npm",
-			"action": {
-				"name": "Node.js (npm)",
-				"commands": ["dnf -q -y -C module install nodejs:16"]
-			}
+	"repos": {
+		"rpmfusion-free": {
+			"name": "RPM Fusion - free",
+			"commands": [
+				"sudo dnf -q -y install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm"
+			]
 		},
-		{
-			"id": "snap",
-			"action": {
-				"name": "Snap (snap)",
-				"commands": [
-					"sudo dnf -q -y -C install snapd",
-					"if [[ ! -L \"/snap\" ]]; then sudo ln -s /var/lib/snapd/snap /snap fi"
-				]
-			}
+		"rpmfusion-nonfree": {
+			"name": "RPM Fusion - nonfree",
+			"commands": [
+				"sudo dnf -q -y install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm"
+			]
+		},
+		"github-cli": {
+			"name": "GitHub CLI",
+			"commands": [
+				"sudo dnf -q -y config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo"
+			]
+		},
+		"nordvpn": {
+			"name": "NordVPN",
+			"commands": [
+				"sudo rpm --import https://repo.nordvpn.com/gpg/nordvpn_public.asc",
+				"sudo dnf -q -y config-manager --add-repo https://repo.nordvpn.com/yum/nordvpn/centos"
+			]
+		},
+		"mkvtoolnix": {
+			"name": "MKVToolNix",
+			"commands": [
+				"sudo rpm -U https://mkvtoolnix.download/fedora/bunkus-org-repo-2-4.noarch.rpm"
+			]
+		},
+		"fish-shell": {
+			"name": "Fish Shell",
+			"commands": [
+				"sudo dnf -q -y config-manager --add-repo https://download.opensuse.org/repositories/shells:fish/Fedora_34/shells:fish.repo"
+			]
+		},
+		"brave-browser": {
+			"name": "Brave Browser",
+			"commands": [
+				"sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc",
+				"sudo dnf -q -y config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/x86_64/"
+			]
+		},
+		"pg-admin": {
+			"name": "pgAdmin",
+			"commands": [
+				"sudo rpm -U https://ftp.postgresql.org/pub/pgadmin/pgadmin4/yum/pgadmin4-fedora-repo-2-1.noarch.rpm"
+			]
 		}
-	],
-	"repos": [
-		{
-			"id": "rpmfusion-free",
-			"action": {
-				"name": "RPM Fusion - free",
-				"commands": [
-					"sudo dnf -q -y install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm"
-				]
-			}
+	},
+	"managers": {
+		"npm": {
+			"name": "Node.js (npm)",
+			"commands": ["dnf -q -y -C module install nodejs:16"]
 		},
-		{
-			"id": "rpmfusion-nonfree",
-			"action": {
-				"name": "RPM Fusion - nonfree",
-				"commands": [
-					"sudo dnf -q -y install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm"
-				]
-			}
-		},
-		{
-			"id": "github-cli",
-			"action": {
-				"name": "GitHub CLI",
-				"commands": [
-					"sudo dnf -q -y config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo"
-				]
-			}
-		},
-		{
-			"id": "nordvpn",
-			"action": {
-				"name": "NordVPN",
-				"commands": [
-					"sudo rpm --import https://repo.nordvpn.com/gpg/nordvpn_public.asc",
-					"sudo dnf -q -y config-manager --add-repo https://repo.nordvpn.com/yum/nordvpn/centos"
-				]
-			}
-		},
-		{
-			"id": "mkvtoolnix",
-			"action": {
-				"name": "MKVToolNix",
-				"commands": [
-					"sudo rpm -U https://mkvtoolnix.download/fedora/bunkus-org-repo-2-4.noarch.rpm"
-				]
-			}
-		},
-		{
-			"id": "fish-shell",
-			"action": {
-				"name": "Fish Shell",
-				"commands": [
-					"sudo dnf -q -y config-manager --add-repo https://download.opensuse.org/repositories/shells:fish/Fedora_34/shells:fish.repo"
-				]
-			}
-		},
-		{
-			"id": "brave-browser",
-			"action": {
-				"name": "Brave Browser",
-				"commands": [
-					"sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc",
-					"sudo dnf -q -y config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/x86_64/"
-				]
-			}
-		},
-		{
-			"id": "pg-admin",
-			"action": {
-				"name": "pgAdmin",
-				"commands": [
-					"sudo rpm -U https://ftp.postgresql.org/pub/pgadmin/pgadmin4/yum/pgadmin4-fedora-repo-2-1.noarch.rpm"
-				]
-			}
+		"snap": {
+			"name": "Snap (snap)",
+			"commands": [
+				"sudo dnf -q -y -C install snapd",
+				"if [[ ! -L \"/snap\" ]]; then sudo ln -s /var/lib/snapd/snap /snap fi"
+			]
 		}
-	]
+	}
 }
