@@ -70,7 +70,7 @@
 						{
 							"name": "cls",
 							"commands": [
-								"if ! grep -q \"# Custom Aliases\" $HOME/.bashrc; then sudo printf \"\\n# Custom Aliases\\n\" >> $HOME/.bashrc fi"
+								"if [ ! grep -q \"# Custom Aliases\" $HOME/.bashrc ]; then sudo printf \"\\n# Custom Aliases\\n\" >> $HOME/.bashrc fi"
 							]
 						}
 					]
