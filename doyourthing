@@ -233,6 +233,21 @@ dyt "Development Tools" \
 dyt "GCC g++" \
 "sudo dnf install gcc-g++"
 
+# CMake
+dyt "CMake" "sudo dnf -q -y -C install cmake"
+
+# OpenCV
+dyt "OpenCV" "cd $HOME/Downloads" \
+"wget -O opencv.zip https://github.com/opencv/opencv/archive/4.x.zip" \
+"sudo unzip opencv.zip -d /opt/opencv" \
+"cd /opt/opencv" \
+"sudo mkdir /build" \
+"sudo cmake . -B build/" \
+"sudo cmake --build build/" \
+"cd /build" \
+"sudo make install" \
+"cd $HOME"
+
 # Gedit
 dyt "Gedit" "sudo dnf -q -y -C install gedit"
 
@@ -378,9 +393,6 @@ dyt "Java SE 18 Development Kit" \
 
 # Kdenlive
 dyt "Kdenlive" "sudo dnf -q -y -C install kdenlive"
-
-# CMake
-dyt "CMake" "sudo dnf -q -y -C install cmake"
 
 # ASCII Art Library
 dyt "ASCII Art Library" "sudo dnf -q -y -C install aalib"
