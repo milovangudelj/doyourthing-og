@@ -1,3 +1,4 @@
+#include <map>
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
@@ -5,6 +6,7 @@
 #include "nlohmann/json.hpp"
 
 #include "Manager.hh"
+#include "Settings.hh"
 
 using namespace std;
 using namespace dyt;
@@ -18,7 +20,7 @@ int main()
 		exit(EXIT_FAILURE);
 	}
 
-	DoYourThing manager("config.json");
+	DoYourThing manager("config.json", {{{Settings::SettingName::Quiet, Settings::SettingOption::n}}});
 
 	// manager.print_config();
 	// manager.print_defaults();

@@ -12,6 +12,7 @@ add_library(libdyt STATIC
 	src/section.cc
 	src/spinner.cc
 	src/colors.cc
+	src/settings.cc
 )
 
 # Internal include directory

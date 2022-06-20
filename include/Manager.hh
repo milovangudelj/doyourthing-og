@@ -8,6 +8,7 @@
 
 #include "Action.hh"
 #include "Section.hh"
+#include "Settings.hh"
 
 namespace dyt
 {
@@ -15,6 +16,7 @@ namespace dyt
 	class DoYourThing
 	{
 	private:
+		Settings _settings;
 		std::string _machine_name;
 		nlohmann::json _config;
 		nlohmann::json _defaults;
@@ -27,8 +29,8 @@ namespace dyt
 		std::vector<Action> get_actions(const nlohmann::json &section);
 
 	public:
-		DoYourThing(const std::string &path_to_config);
-		DoYourThing(const char *path_to_config);
+		DoYourThing(const std::string &path_to_config, const Settings &settings = {{{Settings::SettingName::Quiet, Settings::SettingOption::n}}});
+		DoYourThing(const char *path_to_config, const Settings &settings = {{{Settings::SettingName::Quiet, Settings::SettingOption::n}}});
 		~DoYourThing();
 
 		void print_config();

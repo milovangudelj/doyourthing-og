@@ -5,13 +5,14 @@
 #include "nlohmann/json.hpp"
 
 #include "Manager.hh"
+#include "Settings.hh"
 #include "Colors.hh"
 
 using namespace std;
 using namespace dyt;
 using json = nlohmann::json;
 
-DoYourThing::DoYourThing(const string &path_to_config)
+DoYourThing::DoYourThing(const string &path_to_config, const Settings &settings) : _settings{settings}
 {
 	ifstream config(path_to_config);
 	config >> _config;
@@ -41,7 +42,7 @@ DoYourThing::DoYourThing(const string &path_to_config)
 	setup();
 }
 
-DoYourThing::DoYourThing(const char *path_to_config) : DoYourThing(string(path_to_config))
+DoYourThing::DoYourThing(const char *path_to_config, const Settings &settings) : DoYourThing(string(path_to_config), settings)
 {
 }
 
@@ -126,7 +127,7 @@ void DoYourThing::do_it()
 {
 	Colors &colors = Colors::Get();
 
-	fmt::printf("Setting up packages and configurations for machine: %s\n\n", colors.paint(_machine_name, colors.BRIGHT));
+	fmt::printf("Setting up packages and configurations for machine: %s\n", colors.paint(_machine_name, colors.BRIGHT));
 
 	// Test Section/Action/Spinner functionality with a simple command
 	// one_command_test(_sections);
@@ -138,7 +139,8 @@ void DoYourThing::do_it()
 		section.run_actions();
 	}
 
-	theend();
+	if (_settings[Settings::SettingName::Quiet] == Settings::SettingOption::n)
+		theend();
 }
 
 void DoYourThing::theend()
