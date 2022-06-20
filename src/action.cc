@@ -35,7 +35,7 @@ int Action::run()
 	{
 		try
 		{
-			result += system(std::string(command + " &> /dev/null").c_str());
+			result += system(std::string("eval \"" + command + "\" &> /dev/null").c_str());
 		}
 		catch (const std::exception &e)
 		{
