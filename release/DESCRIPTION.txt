@@ -1,0 +1,1 @@
+A script that installs for you all your programs and packages as well as some system configurations.
