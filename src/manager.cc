@@ -73,8 +73,39 @@ void DoYourThing::setup()
 	}
 }
 
-void DoYourThing::setup_repos(const json &section) {}
-void DoYourThing::setup_managers(const json &section) {}
+void DoYourThing::setup_repos(const json &section)
+{
+	vector<Action> actions;
+
+	for (string r : section["actions"].get<vector<string>>())
+	{
+		auto repo = _defaults["repos"][r].get<json::object_t>();
+
+		auto name = repo["name"].get<string>();
+		auto commands = repo["commands"].get<vector<string>>();
+
+		actions.push_back({name, commands});
+	}
+
+	_sections.push_back({section["name"].get<string>(), actions});
+}
+
+void DoYourThing::setup_managers(const json &section)
+{
+	vector<Action> actions;
+
+	for (string m : section["actions"].get<vector<string>>())
+	{
+		auto repo = _defaults["managers"][m].get<json::object_t>();
+
+		auto name = repo["name"].get<string>();
+		auto commands = repo["commands"].get<vector<string>>();
+
+		actions.push_back({name, commands});
+	}
+
+	_sections.push_back({section["name"].get<string>(), actions});
+}
 
 vector<Action> DoYourThing::get_actions(const json &section)
 {
@@ -139,8 +170,7 @@ void DoYourThing::do_it()
 		section.run_actions();
 	}
 
-	if (_settings[Settings::SettingName::Quiet] == Settings::SettingOption::n)
-		theend();
+	theend();
 }
 
 void DoYourThing::theend()
@@ -149,8 +179,11 @@ void DoYourThing::theend()
 
 	printf("\n* Done! *\n\n"); // TODO: Add gradient
 
-	for (auto &section : _sections)
+	if (_settings[Settings::SettingName::Quiet] == Settings::SettingOption::n)
 	{
-		fmt::printf("%s:\n %s successful\n %s failed\n\n", section.name(), colors.paint(section.successful(), colors.GREEN_FG), colors.paint(section.failed(), colors.RED_FG));
+		for (auto &section : _sections)
+		{
+			fmt::printf("%s:\n %s successful\n %s failed\n\n", section.name(), colors.paint(section.successful(), colors.GREEN_FG), colors.paint(section.failed(), colors.RED_FG));
+		}
 	}
 }
