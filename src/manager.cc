@@ -1,3 +1,4 @@
+#include <filesystem>
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
@@ -9,6 +10,7 @@
 #include "Colors.hh"
 
 using namespace std;
+namespace fs = std::filesystem;
 using namespace dyt;
 using json = nlohmann::json;
 
@@ -21,12 +23,12 @@ DoYourThing::DoYourThing(const string &path_to_config, const Settings &settings)
 
 	_machine_name = machine["name"].get<string>();
 
-	string path_to_defaults = "~/.doyourthing/defaults.json";
+	string path_to_defaults = "/opt/DoYourThing/config/defaults.json";
 	try
 	{
 		string custom_defaults = machine["defaults"].get<string>();
 
-		if (custom_defaults.compare("") != 0)
+		if (custom_defaults.compare("") != 0 && fs::exists(fs::path{custom_defaults}))
 		{
 			path_to_defaults = custom_defaults;
 		}
