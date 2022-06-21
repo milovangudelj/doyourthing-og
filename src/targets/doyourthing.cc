@@ -41,7 +41,7 @@ int main()
 
 	if (!fs::exists(path_to_config))
 	{
-		fmt::printf("You need to provide a configuration file under %s.\nIf you need an example visit https://github.com/milovangudelj/doyourthing/blob/milovangudelj/c++_implementation/config/config.json\n", path_to_config.string());
+		fmt::printf("You need to provide a configuration file under %s.\nIf you need an example visit https://github.com/milovangudelj/doyourthing/blob/master/config/config.json\n", path_to_config.string());
 		exit(0);
 	}
 
