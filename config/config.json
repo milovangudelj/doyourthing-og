@@ -3,7 +3,6 @@
 		{
 			"id": "fedora",
 			"name": "Fedora",
-			"defaults": "defaults.json",
 			"sections": [
 				{
 					"id": "repos",
