@@ -74,3 +74,4 @@ The message will be printed along with the count of successful installs.
 
 - [x] Complete the functions documentation
 - [x] Make the second `theend()` argument optional
+- [ ] Update README to reflect latest changes and implementation in C++
