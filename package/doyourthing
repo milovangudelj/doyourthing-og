@@ -264,22 +264,25 @@ dyt "lolcat" "sudo snap install lolcat"
 dyt "VS Code" "sudo snap install code --classic"
 
 # Sanity CLI
-dyt "Sanity CLI" "sudo npm i @sanity/cli -g"
+dyt "Sanity CLI" "sudo npm i -g @sanity/cli"
 
 # create-next-app
-dyt "create-next-app" "sudo npm i create-next-app -g"
+dyt "create-next-app" "sudo npm i -g create-next-app"
 
 # sass
-dyt "sass" "sudo npm i sass -g"
+dyt "sass" "sudo npm i -g sass"
 
 # supabase
-dyt "Supabase" "sudo npm i supabase -g"
+dyt "Supabase" "sudo npm i -g supabase"
 
 # ts-node
-dyt "ts-node" "sudo npm i ts-node -g"
+dyt "ts-node" "sudo npm i -g ts-node"
 
 # Vercel
-dyt "Vercel" "sudo npm i vercel -g"
+dyt "Vercel" "sudo npm i -g vercel"
+
+# Yarn
+dyt "Yarn" "sudo npm i -g yarn"
 
 # Spotify
 dyt "Spotify" "sudo snap install spotify"
